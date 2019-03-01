@@ -1,44 +1,45 @@
 
 
 #' flowchart
-#'
+#' @description \code{flowchart} helps taking the pain out of laying out a flowchart. It automatically sets the horizontal and vertical positions of boxes and links boxes with arrows.
+#' 
 #' @param dat dataframe with variables \code{level}, \code{group}, 
 #' \code{incexc}, \code{text} and, optionally, \code{x}, \code{y}, 
-#' \code{width}, \code{just}
+#' \code{width}, \code{just}. See details.
 #' @param gp colour to fill boxes with (single value)
-#' @param group_exc_shift how much to move the exclusion group by
+#' @param group_exc_shift how much to move the exclusion group by, as a proportion of the figure width
 #' @param arrow_obj getOption object to define the arrow type
 #' @param term_arrow_type terminal arrow type (only used for terminal 
 #' exclusions). Can take one of \code{v}, \code{h}, \code{L}, \code{-}, 
 #' \code{Z} or \code{N}
-#'
+#' 
+#' @details Eact row of \code{dat} represents a box in the flowchart. The vertical position on the flow chart is controlled by \code{level} (1 is at the top, 2 is below it and so on). Where multiple boxes must be on the same \code{level} (e.g. in an RCT), \code{group} is used to indicate which left horizontal position. The text in the box should be entered into a \code{text} variable. There should also be an \code{incexc} variable to indicate \code{inc}lusion or \code{exc}lusion. \code{Exc}lusion boxes are shifted \code{group_exc_shift} to the right of the \code{group}s position on the x axis.
+#' 
 #' @return dataframe containing \code{level}, \code{group}, \code{text}, 
 #' \code{incexc}, \code{x}, \code{y}, \code{width}, which can be used to 
 #' optimize the flowchart
 #' @export
+#' 
 #' @examples
 #' dat <- data.frame(level = c(1, 2, 3, 4, 4, 5, 5, 6, 6),
-#' group = c(NA, NA, NA, 1, 2, 1, 2, 1, 2),
-#' text  = c("Assessed for eligibility", "Not eligible\nfor inclusion", "Randomized", "Group1", "Group2", "Excl Group1", "Exc\nGroup2",  #'"Anal1", "Anal2"),
-#' incexc = c("inc", "exc", "inc", "inc", "inc", "exc", "exc", "inc", "inc")
-#' )
+#'                   group = c(NA, NA, NA, 1, 2, 1, 2, 1, 2),
+#'                   text  = c("Assessed for eligibility", "Not eligible\nfor inclusion", 
+#'                             "Randomized", "Group1", "Group2", "Excl Group1", "Exc\nGroup2", "Analysis1", 
+#'                             "Analysis2"),
+#'                   incexc = c("inc", "exc", "inc", "inc", "inc", "exc", "exc", 
+#'                              "inc", "inc"))
 #' View(dat)
 #' flowchart(dat)
-flowchart <- function(dat, # dataframe
-                      gp = gpar(fill = "lightgrey"), # box fill
-                      group_exc_shift = 0.2, # how much to move the exclusion group by
-                      arrow_obj = getOption("connectGrobArrow", # redefine the arrow type
+flowchart <- function(dat,
+                      gp = gpar(fill = "lightgrey"),
+                      group_exc_shift = 0.2,
+                      arrow_obj = getOption("connectGrobArrow",
                                             default = arrow(ends = "last", 
                                                             type = "closed", 
                                                             length = unit(0.25, "cm")
-                                                            )
-                                            ),
-                      term_arrow_type = "L" # terminal arrow type (only for exclusions) One of "v", "h", "L", "-", "Z" or "N"
-                      ){
-  require(grid)
-  require(Gmisc)
-  require(dplyr)
-
+                                                            )),
+                      term_arrow_type = "L"){
+  
   dat$row <- 1:nrow(dat)
   dat <- dat %>% group_by(level) %>% mutate(n_lev = n(), x = 1/(n_lev+1), x_o = x)
   dat <- dat %>% group_by(group) %>% mutate(nth = 1:n())
