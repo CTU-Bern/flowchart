@@ -5,7 +5,7 @@ Version: 0.1.0
 Authors@R: person("Haynes", "Alan", email = "alan.haynes@ctu.unibe.ch",
   role = c("aut", "cre"))
 Maintainer: Alan Haynes <alan.haynes@ctu.unibe.ch>
-Description: Create flowcharts automatically from a specifically formatted dataframe.
+Description: Take the pain out of laying out a flowchart in R.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
