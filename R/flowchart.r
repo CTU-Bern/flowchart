@@ -19,6 +19,9 @@
 #' \code{incexc}, \code{x}, \code{y}, \code{width}, which can be used to 
 #' optimize the flowchart
 #' @export
+#' @import dplyr
+#' @import Gmisc
+#' @import grid
 #' 
 #' @examples
 #' dat <- data.frame(level = c(1, 2, 3, 4, 4, 5, 5, 6, 6),
@@ -89,7 +92,8 @@ flowchart <- function(dat,
     tmp_y <- dat$y[i]
     width <- dat$width[i]
     just <- dat$just[i]
-    print(assign(box, boxGrob(txt, x=x, y=tmp_y, box_gp = gp, width = width, just = just)))
+    if(!grepl("^expression", txt)) print(assign(box, boxGrob(txt, x=x, y=tmp_y, box_gp = gp, width = width, just = just)))
+    if(grepl("^expression", txt)) print(assign(box, boxGrob(eval(parse(text = txt)), x=x, y=tmp_y, box_gp = gp, width = width, just = just)))
     
   }
   
