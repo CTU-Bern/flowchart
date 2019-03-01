@@ -24,6 +24,8 @@
 #' @export flowchart
 #' 
 #' @examples
+#' 
+#' # standard example
 #' dat <- data.frame(level = c(1, 2, 3, 4, 4, 5, 5, 6, 6),
 #'                   group = c(NA, NA, NA, 1, 2, 1, 2, 1, 2),
 #'                   text  = c("Assessed for eligibility", "Not eligible\nfor inclusion", 
@@ -33,6 +35,21 @@
 #'                              "inc", "inc"))
 #' dat
 #' flowchart(dat)
+#' 
+#' 
+#' # example with expression
+#' dat <- data.frame(level = c(1, 2, 3, 4, 4, 5, 5, 6, 6),
+#'                   group = c(NA, NA, NA, 1, 2, 1, 2, 1, 2),
+#'                   text  = c("Assessed for eligibility", "Not eligible\nfor inclusion", 
+#'                             "Randomized", "Group1", "Group2", "expression(paste(bold('Excl'), ' Group1'))", "Exc\nGroup2", "Analysis1", 
+#'                             "Analysis2"),
+#'                   incexc = c("inc", "exc", "inc", "inc", "inc", "exc", "exc", 
+#'                              "inc", "inc"))
+#' dat
+#' flowchart(dat)
+#' 
+#' 
+#' 
 flowchart <- function(dat,
                       gp = gpar(fill = "lightgrey"),
                       group_exc_shift = 0.2,
@@ -43,48 +60,87 @@ flowchart <- function(dat,
                                                             )),
                       term_arrow_type = "L"){
   
+  # coerce factors to strings 
   if(is.factor(dat$text)) dat$text <- as.character(dat$text)
+  
+  # derive x and y locations
   dat$row <- 1:nrow(dat)
   dat <- dat %>% group_by(level) %>% mutate(n_lev = n(), x = 1/(n_lev+1), x_o = x)
   dat <- dat %>% group_by(group) %>% mutate(nth = 1:n())
   dat <- as.data.frame(dat)
   dat$x[!is.na(dat$group)] <- (dat$x*dat$group)[!is.na(dat$group)]
   dat$x[is.na(dat$group) & dat$incexc == "exc"] <- 0.75
-  dat$x[!is.na(dat$group) & dat$incexc == "exc"] <- (dat$x + dat$x_o*group_exc_shift)[!is.na(dat$group) & dat$incexc == "exc"]
+  w <- !is.na(dat$group) & dat$incexc == "exc"
+  dat$x[w] <- (dat$x + dat$x_o*group_exc_shift)[w]
   
   if(!"width" %in% names(dat)){
     dat$width <- .6/dat$n_lev
     dat$width[is.na(dat$group)] <- .3
-    dat$width[dat$incexc == "exc"] <- dat$width[dat$incexc == "exc"]*.7
+    w <- dat$incexc == "exc"
+    dat$width[w] <- dat$width[w]*.7
   }
   if(!"just" %in% names(dat)){
     dat$just <- "left"
   }
   
-  
   dat$lines <- sapply(strsplit(dat$text, "\n", fixed = TRUE), length)
   
-  dat <- dat %>% group_by(level) %>% mutate(n_lines = max(lines)) %>% as.data.frame
+  dat <- dat %>% 
+    group_by(level) %>% 
+    mutate(n_lines = max(lines)) %>% 
+    as.data.frame
   t <- tapply(dat$n_lines, dat$level, max)
   dat$cum_lines <- cumsum(t)[dat$level]
-  ma <- function(x,n=3){c(x[1], stats::filter(x,rep(1/n,n), sides=2)[2:(length(x)-1)], x[length(x)])}
+  ma <- function(x, n=3){
+    c(x[1], stats::filter(x, rep(1/n, n), sides=2)[2:(length(x)-1)], x[length(x)])
+  }
   dat$rolling <- ma(cumsum(t))[dat$level]
   tsum <- sum(t)
   
-  # pad out text with different numbers of lines
-  x <- dat$lines < dat$n_lines
-  if(any(x)) dat$text[x] <- apply(dat[x,], 1, function(x) paste0(x["text"], paste0(rep("\n", as.numeric(x["n_lines"])-as.numeric(x["lines"])), collapse = "")))
   
+  
+  # pad out text with different numbers of lines
+  dat$linesdif <- with(dat, as.numeric(n_lines) - as.numeric(lines))
+  pad <- dat$linesdif > 0
+  exp <- grepl("^expression\\(", dat$text)
+  if(any(pad)){
+    # normal text
+    w <- pad & !exp
+    if(any(w)){
+      dat$text[w] <- apply(dat[w,], 1, function(x){ 
+        paste0(x["text"], 
+               paste0(rep("\n", 
+                          x["linesdif"]), 
+                      collapse = "")
+               )
+        }
+        )
+    }
+    w <- pad & exp
+    if(any(w)){
+      # expressions
+      dat$text[w] <- apply(dat[w, ],
+                           1,
+                           function(x)
+                             gsub("\\)$",
+                                       paste0(
+                                         rep("\n",
+                                             x["linesdif"])
+                                         , ")", collapse = "")
+                                  ,x["text"])
+                           )
+    }
+  }
   
   if(!"y" %in% names(dat)){
     dat$y <- 1 - dat$rolling*(1/(tsum+1))
   }
   
-  dat$box <- ""
   
   grid.newpage()
   
   # boxes
+  dat$box <- ""
   for(i in 1:nrow(dat)){
     box <- paste0("box", i)
     dat$box[i] <- box
