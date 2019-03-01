@@ -1,0 +1,10 @@
+Package: flowchart
+Type: Package
+Title: Easily create flowcharts from a dataframe
+Version: 0.1.0
+Author: Alan Haynes
+Maintainer: Alan Haynes <alan.haynes@ctu.unibe.ch>
+Description: Create flowcharts automatically from a specifically formatted dataframe.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
