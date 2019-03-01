@@ -18,10 +18,10 @@
 #' @return dataframe containing \code{level}, \code{group}, \code{text}, 
 #' \code{incexc}, \code{x}, \code{y}, \code{width}, which can be used to 
 #' optimize the flowchart
-#' @export
 #' @import dplyr
 #' @import Gmisc
 #' @import grid
+#' @export flowchart
 #' 
 #' @examples
 #' dat <- data.frame(level = c(1, 2, 3, 4, 4, 5, 5, 6, 6),
