@@ -12,11 +12,11 @@ flowchart(dat, gp = gpar(fill = "lightgrey"), group_exc_shift = 0.2,
 \arguments{
 \item{dat}{dataframe with variables \code{level}, \code{group}, 
 \code{incexc}, \code{text} and, optionally, \code{x}, \code{y}, 
-\code{width}, \code{just}}
+\code{width}, \code{just}. See details.}
 
 \item{gp}{colour to fill boxes with (single value)}
 
-\item{group_exc_shift}{how much to move the exclusion group by}
+\item{group_exc_shift}{how much to move the exclusion group by, as a proportion of the figure width}
 
 \item{arrow_obj}{getOption object to define the arrow type}
 
@@ -30,16 +30,19 @@ dataframe containing \code{level}, \code{group}, \code{text},
 optimize the flowchart
 }
 \description{
-flowchart
+\code{flowchart} helps taking the pain out of laying out a flowchart. It automatically sets the horizontal and vertical positions of boxes and links boxes with arrows.
+}
+\details{
+Eact row of \code{dat} represents a box in the flowchart. The vertical position on the flow chart is controlled by \code{level} (1 is at the top, 2 is below it and so on). Where multiple boxes must be on the same \code{level} (e.g. in an RCT), \code{group} is used to indicate which left horizontal position. The text in the box should be entered into a \code{text} variable. There should also be an \code{incexc} variable to indicate \code{inc}lusion or \code{exc}lusion. \code{Exc}lusion boxes are shifted \code{group_exc_shift} to the right of the \code{group}s position on the x axis.
 }
 \examples{
 dat <- data.frame(level = c(1, 2, 3, 4, 4, 5, 5, 6, 6),
-group = c(NA, NA, NA, 1, 2, 1, 2, 1, 2),
-text  = c("Assessed for eligibility", "Not eligible\\nfor inclusion", 
-"Randomized", "Group1", "Group2", "Excl Group1", "Exc\\nGroup2", "Analysis1", 
-"Analysis2"),
-incexc = c("inc", "exc", "inc", "inc", "inc", "exc", "exc", "inc", "inc")
-)
-View(dat)
+                  group = c(NA, NA, NA, 1, 2, 1, 2, 1, 2),
+                  text  = c("Assessed for eligibility", "Not eligible\\nfor inclusion", 
+                            "Randomized", "Group1", "Group2", "Excl Group1", "Exc\\nGroup2", "Analysis1", 
+                            "Analysis2"),
+                  incexc = c("inc", "exc", "inc", "inc", "inc", "exc", "exc", 
+                             "inc", "inc"))
+dat
 flowchart(dat)
 }
