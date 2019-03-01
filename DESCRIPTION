@@ -12,5 +12,5 @@ LazyData: true
 RoxygenNote: 6.1.1
 Depends:
   dplyr,
-  Gmisc (>= 1.8),
+  Gmisc (>= 1.6.4),
   grid
