@@ -16,8 +16,14 @@
 #' \code{incexc}, \code{x}, \code{y}, \code{width}, which can be used to 
 #' optimize the flowchart
 #' @export
-#'
 #' @examples
+#' dat <- data.frame(level = c(1, 2, 3, 4, 4, 5, 5, 6, 6),
+#' group = c(NA, NA, NA, 1, 2, 1, 2, 1, 2),
+#' text  = c("Assessed for eligibility", "Not eligible\nfor inclusion", "Randomized", "Group1", "Group2", "Excl Group1", "Exc\nGroup2",  #'"Anal1", "Anal2"),
+#' incexc = c("inc", "exc", "inc", "inc", "inc", "exc", "exc", "inc", "inc")
+#' )
+#' View(dat)
+#' flowchart(dat)
 flowchart <- function(dat, # dataframe
                       gp = gpar(fill = "lightgrey"), # box fill
                       group_exc_shift = 0.2, # how much to move the exclusion group by
