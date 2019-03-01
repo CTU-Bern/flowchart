@@ -7,7 +7,7 @@
 flowchart(dat, gp = gpar(fill = "lightgrey"), group_exc_shift = 0.2,
   arrow_obj = getOption("connectGrobArrow", default = arrow(ends =
   "last", type = "closed", length = unit(0.25, "cm"))),
-  term_arrow_type = "L")
+  term_arrow_type = "L", tab = TRUE)
 }
 \arguments{
 \item{dat}{dataframe with variables \code{level}, \code{group}, 
@@ -23,6 +23,8 @@ flowchart(dat, gp = gpar(fill = "lightgrey"), group_exc_shift = 0.2,
 \item{term_arrow_type}{terminal arrow type (only used for terminal 
 exclusions). Can take one of \code{v}, \code{h}, \code{L}, \code{-}, 
 \code{Z} or \code{N}}
+
+\item{tab}{return a table to make modifications easier}
 }
 \value{
 dataframe containing \code{level}, \code{group}, \code{text}, 
@@ -53,7 +55,7 @@ flowchart(dat)
 dat <- data.frame(level = c(1, 2, 3, 4, 4, 5, 5, 6, 6),
                   group = c(NA, NA, NA, 1, 2, 1, 2, 1, 2),
                   text  = c("Assessed for eligibility", "Not eligible\\nfor inclusion", 
-                            "Randomized", "Group1", "Group2", "expression(paste(bold('Excl'), 'Group1'))", "Exc\\nGroup2", "Analysis1", 
+                            "Randomized", "Group1", "Group2", "expression(paste(bold('Excl'), ' Group1'))", "Exc\\nGroup2", "Analysis1", 
                             "Analysis2"),
                   incexc = c("inc", "exc", "inc", "inc", "inc", "exc", "exc", 
                              "inc", "inc"))
