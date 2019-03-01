@@ -28,7 +28,7 @@
 #'                             "Analysis2"),
 #'                   incexc = c("inc", "exc", "inc", "inc", "inc", "exc", "exc", 
 #'                              "inc", "inc"))
-#' View(dat)
+#' dat
 #' flowchart(dat)
 flowchart <- function(dat,
                       gp = gpar(fill = "lightgrey"),
