@@ -43,6 +43,7 @@ flowchart <- function(dat,
                                                             )),
                       term_arrow_type = "L"){
   
+  if(is.factor(dat$text)) dat$text <- as.character(dat$text)
   dat$row <- 1:nrow(dat)
   dat <- dat %>% group_by(level) %>% mutate(n_lev = n(), x = 1/(n_lev+1), x_o = x)
   dat <- dat %>% group_by(group) %>% mutate(nth = 1:n())
