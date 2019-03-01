@@ -1,0 +1,16 @@
+Package: flowchart
+Type: Package
+Title: Easily create flowcharts from a dataframe
+Version: 0.1.0
+Authors@R: person("Haynes", "Alan", email = "alan.haynes@ctu.unibe.ch",
+  role = c("aut", "cre"))
+Maintainer: Alan Haynes <alan.haynes@ctu.unibe.ch>
+Description: Take the pain out of laying out a flowchart in R.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Depends:
+  dplyr,
+  Gmisc (>= 1.6.4),
+  grid
