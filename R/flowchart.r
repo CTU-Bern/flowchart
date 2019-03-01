@@ -12,6 +12,7 @@
 #' @param term_arrow_type terminal arrow type (only used for terminal 
 #' exclusions). Can take one of \code{v}, \code{h}, \code{L}, \code{-}, 
 #' \code{Z} or \code{N}
+#' @param tab return a table to make modifications easier
 #' 
 #' @details Eact row of \code{dat} represents a box in the flowchart. The vertical position on the flow chart is controlled by \code{level} (1 is at the top, 2 is below it and so on). Where multiple boxes must be on the same \code{level} (e.g. in an RCT), \code{group} is used to indicate which left horizontal position. The text in the box should be entered into a \code{text} variable. There should also be an \code{incexc} variable to indicate \code{inc}lusion or \code{exc}lusion. \code{Exc}lusion boxes are shifted \code{group_exc_shift} to the right of the \code{group}s position on the x axis.
 #' 
@@ -58,21 +59,31 @@ flowchart <- function(dat,
                                                             type = "closed", 
                                                             length = unit(0.25, "cm")
                                                             )),
-                      term_arrow_type = "L"){
+                      term_arrow_type = "L",
+                      tab = FALSE){
   
   # coerce factors to strings 
   if(is.factor(dat$text)) dat$text <- as.character(dat$text)
   
+  # xexists
+  xexists <- "x" %in% names(dat)
+  
   # derive x and y locations
   dat$row <- 1:nrow(dat)
-  dat <- dat %>% group_by(level) %>% mutate(n_lev = n(), x = 1/(n_lev+1), x_o = x)
+  if(!xexists){ 
+    dat <- dat %>% group_by(level) %>% mutate(n_lev = n(), x = 1/(n_lev+1), x_o = x)
+  } else {
+    dat <- dat %>% group_by(level) %>% mutate(n_lev = n(), x_o = x)
+  }
+  
   dat <- dat %>% group_by(group) %>% mutate(nth = 1:n())
   dat <- as.data.frame(dat)
-  dat$x[!is.na(dat$group)] <- (dat$x*dat$group)[!is.na(dat$group)]
-  dat$x[is.na(dat$group) & dat$incexc == "exc"] <- 0.75
-  w <- !is.na(dat$group) & dat$incexc == "exc"
-  dat$x[w] <- (dat$x + dat$x_o*group_exc_shift)[w]
-  
+  if(!xexists){
+    dat$x[!is.na(dat$group)] <- (dat$x*dat$group)[!is.na(dat$group)]
+    dat$x[is.na(dat$group) & dat$incexc == "exc"] <- 0.75
+    w <- !is.na(dat$group) & dat$incexc == "exc"
+    dat$x[w] <- (dat$x + dat$x_o*group_exc_shift)[w]
+  }
   if(!"width" %in% names(dat)){
     dat$width <- .6/dat$n_lev
     dat$width[is.na(dat$group)] <- .3
@@ -191,7 +202,7 @@ flowchart <- function(dat,
                         eval(parse(text = tmp$box[row])), "N", arrow_obj = arrow_obj))
     }
   }
-  return(dat[,c("level", "group", "text", "incexc", "x", "y", "width")])  
+  if(tab) return(dat[,c("level", "group", "text", "incexc", "x", "y", "width")])  
 }
 
 
