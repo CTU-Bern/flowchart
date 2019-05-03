@@ -16,14 +16,15 @@ guesses based on the data supplied it.
 
 ## Installation/Loading
 
-This package is currently only available on github.
+This package is currently only available on github. Because it's currently a private repository, you need to authenticate your access via a token (see [here](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) for info).
 
 ``` r
 # install.packages("devtools")
 # less developmental version
-devtools::install_github("CTU-bern/flowchart")
+token <- readLines("PATH_TO_TOKEN")
+devtools::install_github("CTU-bern/flowchart", auth_token = token)
 # main developmental version
-devtools::install_github("aghaynes/flowchart")
+devtools::install_github("aghaynes/flowchart", auth_token = token)
 ```
 
 The package is loaded into R as usual
